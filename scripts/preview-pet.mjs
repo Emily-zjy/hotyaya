@@ -1,0 +1,11 @@
+import { build } from "esbuild";
+import { mkdir, cp, writeFile, readFile } from "node:fs/promises";
+import { createServer } from "node:http";
+import path from "node:path";
+const out=path.resolve(".superpowers/pet-preview");
+await mkdir(out,{recursive:true});
+await build({entryPoints:["scripts/pet-preview.tsx"],bundle:true,outfile:path.join(out,"preview.js"),platform:"browser",jsx:"automatic",define:{"process.env.NODE_ENV":'"development"'}});
+await cp("assets",path.join(out,"assets"),{recursive:true});
+await cp("styles.css",path.join(out,"styles.css"));
+await writeFile(path.join(out,"index.html"),`<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>hotyaya · 宠物小窝</title><link rel="stylesheet" href="styles.css"><style>body{margin:0;background:#f5f3ed;color:#424b3f;font-family:system-ui,'Microsoft YaHei',sans-serif}main{max-width:760px;margin:7vh auto;padding:30px}main small{font-size:11px;letter-spacing:3px;color:#9e8366}h1{font-size:44px;line-height:1.4;font-weight:500;margin:25px 0}main p{line-height:2;color:#858878}article{border-left:2px solid #c7d1bb;padding:2px 24px;margin:35px 0}h2{font-size:17px;font-weight:500}fieldset{border:1px solid #e2dfd4;border-radius:12px;padding:15px;font-size:12px;display:flex;gap:8px;flex-wrap:wrap}fieldset button,fieldset select{border:1px solid #d6d7cb;border-radius:6px;background:#fffefa;padding:6px;color:#526047}legend{color:#919982}.theme-dark{background:#20251f;color:#eee8de}</style><div id="root"></div><script src="preview.js"></script></html>`);
+createServer(async(req,res)=>{try{const relative=decodeURIComponent(new URL(req.url,"http://localhost").pathname);const file=path.resolve(out,"."+(relative==="/"?"/index.html":relative));if(!file.startsWith(out+path.sep)){res.writeHead(403).end();return;}const data=await readFile(file);res.setHeader("Content-Type",({".html":"text/html; charset=utf-8",".js":"text/javascript",".css":"text/css",".gif":"image/gif",".png":"image/png"})[path.extname(file)]||"application/octet-stream");res.end(data);}catch{res.writeHead(404).end();}}).listen(4318,"127.0.0.1",()=>console.log("Pet preview: http://127.0.0.1:4318"));

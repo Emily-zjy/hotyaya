@@ -1,3 +1,4 @@
+import type { PetMemory } from "./pet-model";
 import type { Action, Artifact, RunEvent } from "../shared/protocol";
 import type { Snapshot } from "../plugin/edits";
 export interface CompanionHost {
@@ -25,6 +26,8 @@ export interface CompanionHost {
   setQuiet(quiet: boolean): void;
   isQuiet(): boolean;
   petUrl(state: "idle" | "busy" | "reading" | "success" | "error"): string;
+  petAsset?(file: "oneko.gif" | "icon.png"): string;
+  pet?: { load(): unknown; save(memory: PetMemory): void | Promise<void> };
   disable(): void;
   /** Restores the conversation after switching notes and back. */
   session?: { load(): ChatSession | undefined; save(state: ChatSession): void };

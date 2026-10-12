@@ -108,3 +108,84 @@
 .mdc-thumb-missing { font-size:11px; color:var(--mdc-muted); margin:8px 0 0; }
 .mdc-image-modal { width:min(1200px,92vw); }
 .mdc-image-full { display:block; max-width:100%; max-height:78vh; margin:0 auto; object-fit:contain; }
+
+/* Pet companion: transparent stage, warm paper home, locally bundled sprites. */
+.mdc-shell .mdc-creature { width:80px; height:auto!important; aspect-ratio:1; padding:0; border:0!important; border-radius:0!important; background:transparent!important; box-shadow:none!important; isolation:isolate; }
+.mdc-creature .mdc-pet-actor { position:relative; display:block; width:100%; height:100%; transform-origin:50% 85%; filter:drop-shadow(0 2px 1px #382a241a); }
+.mdc-creature img { width:100%; height:100%; object-fit:contain; }
+.mdc-neko { display:block; image-rendering:pixelated; background-repeat:no-repeat; }
+.mdc-pet-shadow { position:absolute; bottom:0; left:22%; width:56%; height:9%; border-radius:50%; background:#575c3a20; filter:blur(2px); }
+.mdc-pet-prop { position:absolute; right:-2px; top:4px; min-width:22px; font-size:23px; font-weight:700; color:#ae7155; text-shadow:0 1px 4px #fff; pointer-events:none; }
+.mdc-pet-name { position:absolute; top:100%; left:50%; transform:translateX(-50%); max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:10px; font-weight:600; letter-spacing:.02em; background:var(--mdc-paper); border:1px solid var(--mdc-line); border-radius:20px; padding:1px 9px; }
+.mdc-shell .mdc-pet-menu-toggle { pointer-events:auto; border-radius:50%; padding:5px; width:26px; height:26px; background:#f1e7dc; color:#986a4c; box-shadow:0 2px 8px #4a372418; z-index:4; }
+.mdc-pet-speech { max-width:min(250px,calc(100vw - 16px)); width:max-content; border-radius:16px 16px 4px 16px; }
+.mdc-pet-speech strong { display:block; color:#9a7858; font-size:10px; margin-bottom:3px; }
+.mdc-pet-home { pointer-events:auto; width:min(314px,calc(100vw - 16px)); max-height:calc(100vh - 16px); overflow:auto; padding:19px; background:var(--mdc-paper); border:1px solid #e6dfd4; box-shadow:0 16px 60px #40332924; border-radius:22px; z-index:10; color:var(--mdc-ink); }
+.mdc-pet-home header { display:flex; align-items:flex-start; justify-content:space-between; }
+.mdc-pet-home small { font-size:9px; letter-spacing:1.8px; color:#ac8664; }
+.mdc-pet-home h3 { margin:2px 0 5px; font-size:19px; font-weight:650; overflow-wrap:anywhere; }
+.mdc-pet-caption { font-size:11px; color:var(--mdc-muted); margin:3px 0 12px; }
+.mdc-pet-bond { height:4px; overflow:hidden; border-radius:5px; background:#ebe9e0; }
+.mdc-pet-bond span { display:block; height:100%; background:#bccead; border-radius:5px; transition:width .3s; }
+.mdc-pet-current { font-size:12px; min-height:20px; margin:13px 0; color:#7c876c; }
+.mdc-pet-actions { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; margin-bottom:15px; }
+.mdc-shell .mdc-pet-actions button { flex-direction:column; gap:6px; border:1px solid #eae5db; background:#f7f5ee; padding:12px 3px; border-radius:12px; font-size:11px; }
+.mdc-shell .mdc-pet-actions button:hover { background:#eaf0e5; border-color:#cad8bd; }
+.mdc-pet-actions svg { color:#9b805e; stroke-width:1.5; }
+.mdc-pet-home label { font-size:11px; color:var(--mdc-muted); display:block; }
+.mdc-pet-name-row { display:flex; gap:6px; margin:6px 0 12px; }
+.mdc-pet-home input { width:100%; min-width:0; border:1px solid #e5dfd4; background:transparent; color:inherit; border-radius:9px; padding:7px 9px; box-shadow:none; }
+.mdc-pet-name-row button { flex-shrink:0; background:#eaf0e5; }
+.mdc-pet-options { display:flex; gap:12px; }
+.mdc-pet-options label { flex:1; }
+.mdc-pet-options select { display:block; width:100%; margin-top:4px; border:1px solid #e5dfd4; border-radius:8px; background:transparent; color:inherit; font-size:11px; }
+.mdc-pet-diary { border-top:1px solid var(--mdc-line); margin-top:15px; padding-top:11px; font-size:11px; }
+.mdc-pet-diary summary { display:flex; align-items:center; gap:6px; cursor:pointer; color:#8f806e; }
+.mdc-pet-diary ul { padding:0; list-style:none; max-height:150px; overflow:auto; }
+.mdc-pet-diary li { margin:8px 0; }
+.mdc-pet-diary time { color:var(--mdc-muted); margin-right:8px; font-size:10px; }
+.mdc-shell .mdc-pet-wide { width:100%; background:#edf1e7; margin-top:12px; padding:8px; }
+.mdc-pet-home footer { text-align:center; font-size:10px; color:var(--mdc-muted); margin-top:12px; }
+.motion-breathe { animation:mdc-breathe 3.5s ease-in-out infinite; }
+.motion-wander { animation:mdc-wander 7s ease-in-out infinite; }
+.motion-stretch { animation:mdc-stretch 3s ease-in-out infinite; }
+.motion-love { animation:mdc-love 1.4s ease-in-out infinite; }
+.motion-love .mdc-pet-prop { animation:mdc-heart 1.4s ease-out infinite; color:#d18b95; }
+.motion-nibble { animation:mdc-nibble .55s ease-in-out infinite; }
+.motion-chase { animation:mdc-chase 2.2s ease-in-out infinite; }
+.motion-chase .mdc-pet-prop { color:#b99b79; top:auto; bottom:0; animation:mdc-ball 2.2s ease-in-out infinite; }
+.motion-sleep { animation:mdc-breathe 4.5s ease-in-out infinite; }
+.motion-sleep .mdc-pet-prop { font-size:16px; animation:mdc-heart 3s ease-out infinite; }
+.motion-rock { animation:mdc-rock 3.5s ease-in-out infinite; }
+.motion-celebrate { animation:mdc-hop .8s ease-in-out infinite; }
+.motion-lift { transform:rotate(-12deg) translateY(-5px); }
+.motion-think .mdc-pet-prop { animation:mdc-breathe 1.5s ease-in-out infinite; }
+.motion-read .mdc-pet-prop { animation:mdc-page 1.6s ease-in-out infinite; top:auto; bottom:0; }
+.motion-write .mdc-pet-prop { animation:mdc-write .7s ease-in-out infinite; }
+.motion-translate .mdc-pet-prop { font-size:15px; animation:mdc-page 2s ease-in-out infinite; }
+.motion-sort .mdc-pet-prop { animation:mdc-hop 1.2s steps(3) infinite; }
+.motion-search { animation:mdc-rock 2s ease-in-out infinite; }
+.motion-search .mdc-pet-prop { animation:mdc-search 2s ease-in-out infinite; }
+.motion-paint .mdc-pet-prop { animation:mdc-paint 1s ease-in-out infinite; }
+.motion-pack .mdc-pet-prop { animation:mdc-pack 1.5s ease-in-out infinite; }
+.motion-present .mdc-pet-prop { animation:mdc-page 2s ease-in-out infinite; }
+@keyframes mdc-breathe { 50% { transform:translateY(-2px) scaleY(1.025); } }
+@keyframes mdc-wander { 25% { transform:translateX(-12px); } 75% { transform:translateX(8px); } }
+@keyframes mdc-stretch { 50% { transform:scale(1.06,.91) rotate(-5deg); } }
+@keyframes mdc-love { 50% { transform:rotate(6deg) translateY(-3px); } }
+@keyframes mdc-heart { 0% { opacity:0; transform:translateY(4px) scale(.7); } 40% { opacity:1; } 100% { opacity:0; transform:translateY(-18px) scale(1.1); } }
+@keyframes mdc-nibble { 50% { transform:translateY(2px) rotate(3deg); } }
+@keyframes mdc-chase { 35% { transform:translateX(-12px) rotate(-4deg); } 70% { transform:translateX(10px) rotate(5deg); } }
+@keyframes mdc-ball { 35% { transform:translateX(-25px) translateY(-16px); } 70% { transform:translateX(12px); } }
+@keyframes mdc-rock { 30% { transform:rotate(-4deg); } 70% { transform:rotate(4deg); } }
+@keyframes mdc-hop { 50% { transform:translateY(-9px); } }
+@keyframes mdc-page { 50% { transform:rotateY(30deg) rotate(-6deg); } }
+@keyframes mdc-write { 50% { transform:translate(5px,3px) rotate(-16deg); } }
+@keyframes mdc-search { 50% { transform:translate(-8px,6px); } }
+@keyframes mdc-paint { 50% { transform:rotate(-35deg) translateX(-6px); } }
+@keyframes mdc-pack { 50% { transform:translateY(8px) scale(.8); } }
+.mdc-creature.is-still .mdc-pet-actor,.mdc-creature.is-still .mdc-pet-prop { animation:none!important; }
+@media(prefers-reduced-motion:reduce) { .mdc-pet-actor,.mdc-pet-prop { animation:none!important; } .mdc-pet-bond span { transition:none; } }
+.theme-dark .mdc-pet-home { --mdc-paper:#282d29; --mdc-ink:#ece9df; --mdc-muted:#b0b1a4; --mdc-line:#42473e; border-color:#42473e; }
+.theme-dark .mdc-pet-home button,.theme-dark .mdc-pet-home select { color:inherit; }
+.theme-dark .mdc-pet-home .mdc-pet-actions button,.theme-dark .mdc-pet-home .mdc-pet-wide,.theme-dark .mdc-pet-home .mdc-pet-name-row button { background:#373e33; border-color:#4b5147; }

@@ -1,3 +1,4 @@
+import type { PetMemory } from "../ui/pet-model";
 import {
   PluginSettingTab,
   Setting,
@@ -8,6 +9,7 @@ import {
 } from "obsidian";
 import type CompanionPlugin from "../main";
 export interface CompanionSettings {
+  pet?: PetMemory;
   baseUrl: string;
   model: string;
   keyRef: string;

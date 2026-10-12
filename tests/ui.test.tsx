@@ -304,7 +304,7 @@ it("the pet bubble reflects the current work, not the previous result", async ()
   fireEvent.click(screen.getByRole("button", { name: "选择功能" }));
   fireEvent.click(screen.getByRole("button", { name: "导出 PPT" }));
   fireEvent.click(screen.getByRole("button", { name: "收起聊天" }));
-  expect(screen.getByRole("status").textContent).toBe("正在导出 PPT，稍等我一下…");
+  expect(screen.getByRole("status").textContent).toContain("把你的想法装进幻灯片");
   finish();
   await waitFor(() => expect(screen.getByRole("status").textContent).toMatch(/整理好了/));
 });
@@ -317,9 +317,9 @@ it("a reading comment resets the mood left by an earlier failure", async () => {
   fireEvent.click(screen.getByRole("button", { name: "选择功能" }));
   fireEvent.click(screen.getByRole("button", { name: "一键解读" }));
   await screen.findByText("失败");
-  expect(screen.getByAltText("小黄鸭hotyaya").getAttribute("src")).toBe("/error.gif");
+  await waitFor(() => expect(screen.getByRole("img", {name: /^hotyaya：/}).getAttribute("src")).toBe("/error.gif"));
   React.act(() => ref.current.comment("这段论证很清楚。"));
-  expect(screen.getByAltText("小黄鸭hotyaya").getAttribute("src")).toBe("/idle.gif");
+  expect(screen.getByRole("img", {name: /^hotyaya：/}).getAttribute("src")).toBe("/idle.gif");
 });
 it("switching to another note and back restores the conversation", async () => {
   const store = new Map<string, any>();

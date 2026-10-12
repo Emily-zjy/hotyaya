@@ -26,3 +26,7 @@ This project assembles upstream libraries, prompts, workflows and assets. Preser
 SearXNG (AGPL-3.0) and Crawl4AI (Apache-2.0) are optional separately operated services; their server source is not copied into this plugin. Review their project notices when deploying. Only Apache-2.0 Anthropic skills are included; the source-available document skills (pptx, docx, xlsx, pdf) are not.
 
 Additional npm license texts are collected in `vendor/licenses/npm/` by `scripts/licenses.mjs` before packaging. No Python runtime is required or bundled.
+
+## oneko cat sprites
+
+`assets/pet/oneko.gif` and frame coordinates are from https://github.com/adryd325/oneko.js (downloaded 2026-10-12). Copyright © 2022 adryd; MIT permission notice retained in `vendor/licenses/oneko.txt`. The sprite sheet is bundled locally, with no runtime upstream requests. No upstream script is executed. Original Neko lineage: https://en.wikipedia.org/wiki/Neko_(software).

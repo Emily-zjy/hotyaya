@@ -251,6 +251,11 @@ export default class CompanionPlugin extends Plugin {
             `${this.manifest.dir ?? `${this.app.vault.configDir}/plugins/${this.manifest.id}`}/assets/pet/${view!.containerEl.ownerDocument.defaultView?.matchMedia("(prefers-reduced-motion: reduce)").matches ? "icon.png" : state === "busy" ? "yellow_run_8fps.gif" : state === "reading" ? "yellow_walk_8fps.gif" : state === "success" ? "yellow_with_ball_8fps.gif" : state === "error" ? "yellow_swipe_8fps.gif" : "yellow_idle_8fps.gif"}`,
           ),
         ),
+      petAsset: (file) => this.app.vault.adapter.getResourcePath(normalizePath(`${this.manifest.dir ?? `${this.app.vault.configDir}/plugins/${this.manifest.id}`}/assets/pet/${file}`)),
+      pet: {
+        load: () => this.settings.pet,
+        save: async (memory) => { this.settings.pet = memory; await this.saveSettings(); },
+      },
       disable: () => {
         this.enabled.delete(current);
         this.sync();

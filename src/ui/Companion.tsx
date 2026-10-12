@@ -1,3 +1,5 @@
+import { normalizePet } from "./pet-model";
+import { PetCompanion } from "./PetCompanion";
 import React, {
   forwardRef,
   useState,
@@ -106,7 +108,11 @@ function ImagePreview({
   }, [artifact.id]);
   if (!host.artifactUrl) return null;
   if (failed)
-    return <p className="mdc-thumb-missing">预览已失效（执行器重启过）。已保存的图片不受影响。</p>;
+    return (
+      <p className="mdc-thumb-missing">
+        预览已失效（执行器重启过）。已保存的图片不受影响。
+      </p>
+    );
   return (
     <button
       className="mdc-thumb"
@@ -114,12 +120,20 @@ function ImagePreview({
       title="点击放大"
       onClick={() => void host.previewArtifact(artifact)}
     >
-      {src ? <img src={src} alt={artifact.name} /> : <LoaderCircle className="mdc-spin" size={18} />}
+      {src ? (
+        <img src={src} alt={artifact.name} />
+      ) : (
+        <LoaderCircle className="mdc-spin" size={18} />
+      )}
     </button>
   );
 }
 const fileSize = (n?: number) =>
-  n == null ? "" : n < 1024 * 1024 ? `${Math.max(1, Math.round(n / 1024))} KB` : `${(n / 1024 / 1024).toFixed(1)} MB`;
+  n == null
+    ? ""
+    : n < 1024 * 1024
+      ? `${Math.max(1, Math.round(n / 1024))} KB`
+      : `${(n / 1024 / 1024).toFixed(1)} MB`;
 /** Text worth inserting: a fenced code block's body or a table, else the whole answer. */
 function insertable(content: string): string {
   const fenced = content.match(/```(?:markdown|md)?\n([\s\S]*?)```/);
@@ -149,7 +163,9 @@ export const Companion = forwardRef<
     () => initialOpen || Boolean(host.session?.load()?.open),
   );
   const [toolsOpen, setToolsOpen] = useState(false);
-  const [petPosition, setPetPosition] = useState<{ x: number; y: number }>();
+  const [petName, setPetName] = useState(
+    () => normalizePet(host.pet?.load()).name,
+  );
   const [panelPosition, setPanelPosition] = useState<{
     x: number;
     y: number;
@@ -167,30 +183,10 @@ export const Companion = forwardRef<
       }
     | undefined
   >(undefined);
-  const petElement = useRef<HTMLButtonElement>(null);
-  const drag = useRef<
-    | {
-        id: number;
-        x: number;
-        y: number;
-        left: number;
-        top: number;
-        moved: boolean;
-      }
-    | undefined
-  >(undefined);
-  const suppressClick = useRef(false);
   useEffect(() => {
-    const win = petElement.current?.ownerDocument.defaultView;
+    const win = panelElement.current?.ownerDocument.defaultView;
     if (!win) return;
     const resize = () => {
-      setPetPosition(
-        (p) =>
-          p && {
-            x: Math.max(8, Math.min(p.x, win.innerWidth - 74)),
-            y: Math.max(8, Math.min(p.y, win.innerHeight - 74)),
-          },
-      );
       const rect = panelElement.current?.getBoundingClientRect();
       if (rect)
         setPanelPosition(
@@ -203,7 +199,7 @@ export const Companion = forwardRef<
     };
     win.addEventListener("resize", resize);
     return () => win.removeEventListener("resize", resize);
-  }, []);
+  }, [open]);
   const [messages, setMessages] = useState<Message[]>(() =>
     restore(host.session?.load()),
   );
@@ -302,6 +298,7 @@ export const Companion = forwardRef<
     controller.current = abort;
     const run = ++runId.current;
     const live = () => run === runId.current && mounted.current;
+    setOutcome("idle");
     setRunning(true);
     setRunningAction(action);
     setNotice("");
@@ -453,107 +450,24 @@ export const Companion = forwardRef<
   };
   return (
     <div className="mdc-shell">
-      {!open && !quiet && (
-        <div
-          className="mdc-pet-bubble"
-          role="status"
-          style={
-            petPosition
-              ? {
-                  position: "fixed",
-                  left: Math.max(8, petPosition.x - 220),
-                  top: Math.max(8, petPosition.y - 65),
-                  right: "auto",
-                  bottom: "auto",
-                  maxWidth: 220,
-                }
-              : undefined
-          }
-        >
-          {running
-            ? runningAction === "chat"
-              ? "正在想你的问题，稍等我一下…"
-              : `正在${ACTION_LABELS[runningAction]}，稍等我一下…`
-            : petBusy
-              ? "我在读这篇笔记，马上给你建议…"
-              : comment}
-        </div>
-      )}
-      <button
-        ref={petElement}
-        className={`mdc-pet ${running || petBusy ? "is-busy" : ""}`}
-        style={
-          petPosition
-            ? {
-                position: "fixed",
-                left: petPosition.x,
-                top: petPosition.y,
-                right: "auto",
-                bottom: "auto",
-              }
-            : undefined
-        }
-        aria-label="打开hotyaya"
-        title="点击聊天 · 拖动移动"
-        onPointerDown={(event) => {
-          if (event.button !== 0) return;
-          const rect = event.currentTarget.getBoundingClientRect();
-          suppressClick.current = false;
-          drag.current = {
-            id: event.pointerId,
-            x: event.clientX,
-            y: event.clientY,
-            left: rect.left,
-            top: rect.top,
-            moved: false,
-          };
-          event.currentTarget.setPointerCapture?.(event.pointerId);
-        }}
-        onPointerMove={(event) => {
-          const start = drag.current;
-          const win = event.currentTarget.ownerDocument.defaultView;
-          if (!start || start.id !== event.pointerId || !win) return;
-          const dx = event.clientX - start.x,
-            dy = event.clientY - start.y;
-          if (!start.moved && Math.hypot(dx, dy) < 5) return;
-          start.moved = true;
-          suppressClick.current = true;
-          setPetPosition({
-            x: Math.max(8, Math.min(start.left + dx, win.innerWidth - 74)),
-            y: Math.max(8, Math.min(start.top + dy, win.innerHeight - 74)),
-          });
-        }}
-        onPointerUp={(event) => {
-          if (drag.current?.id !== event.pointerId) return;
-          drag.current = undefined;
-          if (event.currentTarget.hasPointerCapture?.(event.pointerId))
-            event.currentTarget.releasePointerCapture(event.pointerId);
-        }}
-        onPointerCancel={() => {
-          drag.current = undefined;
-          suppressClick.current = true;
-        }}
-        onClick={(event) => {
-          if (suppressClick.current && event.detail !== 0) {
-            suppressClick.current = false;
-            return;
-          }
-          setOpen((v) => !v);
-        }}
-      >
-        <img
-          src={host.petUrl(running ? "busy" : petBusy ? "reading" : outcome)}
-          alt="小黄鸭hotyaya"
-          draggable={false}
-        />
-        <span className={`mdc-pet-dot mdc-pet-${outcome}`} />
-      </button>
+      <PetCompanion
+        host={host}
+        onNameChange={setPetName}
+        running={running}
+        action={runningAction}
+        reading={petBusy}
+        outcome={outcome}
+        comment={comment}
+        quiet={quiet}
+        open={open}
+        onChat={() => setOpen((v) => !v)}
+      />
       {open && (
         <section
           ref={panelElement}
           className="mdc-panel"
           role="dialog"
-          aria-label="hotyaya"
+          aria-label={petName}
           style={
             panelPosition
               ? {
@@ -617,7 +531,7 @@ export const Companion = forwardRef<
             }}
           >
             <div className="mdc-brand">
-              <strong>hotyaya</strong>
+              <strong>{petName}</strong>
               {running && <span className="mdc-header-status">正在整理…</span>}
             </div>
             <div className="mdc-header-actions">
@@ -765,106 +679,106 @@ export const Companion = forwardRef<
                         };
                         return (
                           <React.Fragment key={artifact.id}>
-                          {artifact.mime.startsWith("image/") && (
-                            <ImagePreview artifact={artifact} host={host} />
-                          )}
-                          <div className="mdc-file">
-                            <span className="mdc-file-icon">
-                              {artifact.mime.startsWith("image/") ? (
-                                <Image size={18} />
-                              ) : artifact.mime === "text/html" ? (
-                                <Code2 size={18} />
-                              ) : (
-                                <Presentation size={18} />
-                              )}
-                            </span>
-                            <span className="mdc-file-meta">
-                              <strong>{artifact.name}</strong>
-                              <small>
-                                {saved
-                                  ? `已保存到 ${saved}`
-                                  : [
-                                      artifact.name
-                                        .split(".")
-                                        .pop()
-                                        ?.toUpperCase(),
-                                      fileSize(artifact.size),
-                                    ]
-                                      .filter(Boolean)
-                                      .join(" · ")}
-                              </small>
-                            </span>
-                            <span className="mdc-file-actions">
-                              {(artifact.mime === "text/html" ||
-                                artifact.mime.startsWith("image/")) && (
-                                <button
-                                  aria-label={`预览 ${artifact.name}`}
-                                  title="预览"
-                                  onClick={() =>
-                                    void act(() =>
-                                      host.previewArtifact(artifact),
-                                    )
-                                  }
-                                >
-                                  <Eye size={15} />
-                                </button>
-                              )}
-                              {saved ? (
-                                <button
-                                  aria-label={`打开 ${artifact.name}`}
-                                  title="打开"
-                                  onClick={() =>
-                                    void act(() => host.openFile(saved))
-                                  }
-                                >
-                                  <ExternalLink size={15} />
-                                </button>
-                              ) : (
-                                <button
-                                  aria-label={`保存 ${artifact.name}`}
-                                  title="保存到原笔记同目录"
-                                  onClick={() =>
-                                    void act(async () =>
-                                      setNotice(`已保存：${await save()}`),
-                                    )
-                                  }
-                                >
-                                  <FolderDown size={15} />
-                                </button>
-                              )}
-                              <button
-                                aria-label={`下载 ${artifact.name}`}
-                                title="另存为…"
-                                onClick={() =>
-                                  void act(() =>
-                                    host.downloadArtifact(artifact),
-                                  )
-                                }
-                              >
-                                <Download size={15} />
-                              </button>
-                              {artifact.mime.startsWith("image/") &&
-                                message.snapshot &&
-                                host.insertArtifact && (
+                            {artifact.mime.startsWith("image/") && (
+                              <ImagePreview artifact={artifact} host={host} />
+                            )}
+                            <div className="mdc-file">
+                              <span className="mdc-file-icon">
+                                {artifact.mime.startsWith("image/") ? (
+                                  <Image size={18} />
+                                ) : artifact.mime === "text/html" ? (
+                                  <Code2 size={18} />
+                                ) : (
+                                  <Presentation size={18} />
+                                )}
+                              </span>
+                              <span className="mdc-file-meta">
+                                <strong>{artifact.name}</strong>
+                                <small>
+                                  {saved
+                                    ? `已保存到 ${saved}`
+                                    : [
+                                        artifact.name
+                                          .split(".")
+                                          .pop()
+                                          ?.toUpperCase(),
+                                        fileSize(artifact.size),
+                                      ]
+                                        .filter(Boolean)
+                                        .join(" · ")}
+                                </small>
+                              </span>
+                              <span className="mdc-file-actions">
+                                {(artifact.mime === "text/html" ||
+                                  artifact.mime.startsWith("image/")) && (
                                   <button
-                                    title="插入到选区后"
+                                    aria-label={`预览 ${artifact.name}`}
+                                    title="预览"
                                     onClick={() =>
-                                      void act(async () => {
-                                        await host.insertArtifact!(
-                                          artifact,
-                                          message.snapshot!,
-                                        );
-                                        setNotice(
-                                          "配图已插入选区后，可撤销。",
-                                        );
-                                      })
+                                      void act(() =>
+                                        host.previewArtifact(artifact),
+                                      )
                                     }
                                   >
-                                    插入
+                                    <Eye size={15} />
                                   </button>
                                 )}
-                            </span>
-                          </div>
+                                {saved ? (
+                                  <button
+                                    aria-label={`打开 ${artifact.name}`}
+                                    title="打开"
+                                    onClick={() =>
+                                      void act(() => host.openFile(saved))
+                                    }
+                                  >
+                                    <ExternalLink size={15} />
+                                  </button>
+                                ) : (
+                                  <button
+                                    aria-label={`保存 ${artifact.name}`}
+                                    title="保存到原笔记同目录"
+                                    onClick={() =>
+                                      void act(async () =>
+                                        setNotice(`已保存：${await save()}`),
+                                      )
+                                    }
+                                  >
+                                    <FolderDown size={15} />
+                                  </button>
+                                )}
+                                <button
+                                  aria-label={`下载 ${artifact.name}`}
+                                  title="另存为…"
+                                  onClick={() =>
+                                    void act(() =>
+                                      host.downloadArtifact(artifact),
+                                    )
+                                  }
+                                >
+                                  <Download size={15} />
+                                </button>
+                                {artifact.mime.startsWith("image/") &&
+                                  message.snapshot &&
+                                  host.insertArtifact && (
+                                    <button
+                                      title="插入到选区后"
+                                      onClick={() =>
+                                        void act(async () => {
+                                          await host.insertArtifact!(
+                                            artifact,
+                                            message.snapshot!,
+                                          );
+                                          setNotice(
+                                            "配图已插入选区后，可撤销。",
+                                          );
+                                        })
+                                      }
+                                    >
+                                      插入
+                                    </button>
+                                  )}
+                              </span>
+                            </div>
                           </React.Fragment>
                         );
                       })}
