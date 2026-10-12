@@ -1,0 +1,16 @@
+node_modules/
+.venv/
+dist/
+main.js
+worker.cjs
+*.zip
+.env
+.env.*
+!.env.example
+.superpowers/
+coverage/
+vendor/repos/
+test-results/
+__pycache__/
+*.pyc
+.playwright-mcp/

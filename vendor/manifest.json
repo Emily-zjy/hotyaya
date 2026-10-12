@@ -1,0 +1,55 @@
+[
+  {
+    "name": "ppt-master",
+    "repository": "https://github.com/hugohe3/ppt-master",
+    "commit": "b4efe3ddf237a97a42880164759162f8e2412f2f",
+    "license": "licenses/ppt-master.txt"
+  },
+  {
+    "name": "frontend-slides",
+    "repository": "https://github.com/zarazhangrui/frontend-slides",
+    "commit": "9906a34d640d2111f724544cbc50f7f130569ae1",
+    "license": "licenses/frontend-slides.txt"
+  },
+  {
+    "name": "humanizer",
+    "repository": "https://github.com/blader/humanizer",
+    "commit": "225a6f39ac85f76ee48dbad772ea4abe4ed6c9d8",
+    "license": "licenses/humanizer.txt"
+  },
+  {
+    "name": "humanizer-zh",
+    "repository": "https://github.com/op7418/Humanizer-zh",
+    "commit": "f4518a8eab97b8bfebc66a89d34320a89bef6930",
+    "license": "licenses/humanizer-zh.txt"
+  },
+  {
+    "name": "baoyu",
+    "repository": "https://github.com/JimLiu/baoyu-skills",
+    "commit": "1567581c26ec29f4216c6e6835415bf30343b0e3",
+    "license": "licenses/baoyu.txt"
+  },
+  {
+    "name": "fabric",
+    "repository": "https://github.com/danielmiessler/Fabric",
+    "commit": "76cd291d4704a12933263ac7cb2d667509408db2",
+    "license": "licenses/fabric.txt"
+  },
+  {
+    "name": "vscode-pets",
+    "repository": "https://github.com/tonybaloney/vscode-pets",
+    "commit": "6554662a53ef093b7598598b77e51f95128a1f38",
+    "license": "licenses/vscode-pets.txt"
+  },
+  {
+    "name": "anthropic-skills",
+    "repository": "https://github.com/anthropics/skills",
+    "commit": "dbd4588f9e1033efb41dad4bef2f7947c8993d44",
+    "license": "licenses/anthropic-skills.txt",
+    "paths": [
+      "skills/theme-factory/SKILL.md",
+      "skills/theme-factory/themes",
+      "skills/frontend-design/SKILL.md"
+    ]
+  }
+]

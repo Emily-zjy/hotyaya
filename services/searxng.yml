@@ -1,0 +1,8 @@
+use_default_settings: true
+server:
+  secret_key: "replace-with-a-random-secret-before-starting"
+  limiter: false
+search:
+  formats:
+    - html
+    - json

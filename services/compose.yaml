@@ -1,0 +1,14 @@
+services:
+  search:
+    image: searxng/searxng:latest
+    ports:
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - ./searxng.yml:/etc/searxng/settings.yml:ro
+    restart: unless-stopped
+  crawl:
+    image: unclecode/crawl4ai:latest
+    ports:
+      - "127.0.0.1:11235:11235"
+    shm_size: 1gb
+    restart: unless-stopped
