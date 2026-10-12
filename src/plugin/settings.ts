@@ -152,7 +152,7 @@ export function renderSettings(
   field(
     "fastModel",
     "快速模型（可选）",
-    "例如 deepseek-v4-flash",
+    "例如 gpt-4o-mini",
     "同一服务中响应更快的模型。用于自动评论和相关资讯；主模型连续卡住时，最后一次自动重试也改用它。留空则全部使用主模型。",
   );
   new Setting(container)
