@@ -283,6 +283,8 @@ export function PetCompanion({
                 : ACTIVITIES.idle;
   const doAction = (kind: Interaction) => {
     if (busy) return;
+    setMenu(false);
+    menuButton.current?.focus();
     setRecentOutcome("idle");
     const next = interact(memoryRef.current, kind);
     persist(next);

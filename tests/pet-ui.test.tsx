@@ -49,6 +49,7 @@ it("renames, feeds and restores memories after remount", () => {
   fireEvent.click(screen.getByRole("button", { name: "保存" }));
   expect(screen.getByRole("button", { name: "打开团子" })).toBeTruthy();
   fireEvent.click(screen.getByRole("button", { name: "喂点心" }));
+  expect(screen.queryByRole("dialog", { name: "宠物小窝" })).toBeNull();
   expect(getSaved().diary[0].text).toContain("点心");
   expect(
     screen.getByRole("button", { name: "打开团子" }).dataset.activity,
@@ -69,6 +70,7 @@ it("prioritizes AI work over idle or manual actions and returns to idle", () => 
   expect(
     screen.getByRole("button", { name: "打开hotyaya" }).dataset.activity,
   ).toBe("paint");
+  fireEvent.click(screen.getByRole("button", { name: "宠物互动" }));
   expect(
     (screen.getByRole("button", { name: "喂点心" }) as HTMLButtonElement)
       .disabled,
