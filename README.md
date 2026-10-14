@@ -1,12 +1,14 @@
 # hotyaya 🦆
 
-**Obsidian 里的 AI 阅读伙伴** — 一只陪你读笔记、帮你写内容、把想法变成幻灯片的小黄鸭。
+**Obsidian 里的 AI 阅读伙伴** — 云朵猫和小黄鸭陪你读笔记、写内容，把想法变成幻灯片和网页。
 
 免费开源。桌面版 Obsidian 1.11.4+。
 
-![chat](docs/screenshots/chat.png)
+| 云朵猫 · 猫咪的小习惯 | 小黄鸭 · 小鸭的拿手好戏 |
+|:---:|:---:|
+| ![云朵猫互动预览](docs/screenshots/pet-cat-032.png) | ![小黄鸭互动预览](docs/screenshots/pet-duck-032.png) |
 
-小黄鸭停在笔记旁边。点击打开聊天窗，选中一段文字，告诉它你想做什么。
+伙伴停在笔记旁边。点击打开聊天窗，爪印或右键打开互动小窝。摸摸、喂食和动作播放后，菜单自动收起，直接看到宠物。
 
 ---
 
@@ -38,6 +40,8 @@ PPT / HTML 演示增加编辑式、产品分栏、技术演示三种构图，新
 
 ### 📖 阅读与对话
 
+![阅读与聊天](docs/screenshots/chat.png)
+
 | 功能 | 说明 |
 |---|---|
 | **一键解读** | 把整篇笔记讲清楚，标注不确定的地方 |
@@ -57,23 +61,31 @@ PPT / HTML 演示增加编辑式、产品分栏、技术演示三种构图，新
 
 ### 🎨 主题化导出
 
-> 内置 [Anthropic theme-factory](https://github.com/anthropics/skills) 10 套专业配色。模型选主题，程序排版 —— 不可能出现"跳过样式"的裸输出。
+内置 [Anthropic theme-factory](https://github.com/anthropics/skills) 的 10 套配色，生成时根据内容和你的要求选择。可以直接指定「沙漠玫瑰配色」「午夜星河配色」等主题；配色与版式分别选择。
+
+![theme-factory 原始色板和导出效果](docs/screenshots/export-palettes.jpg)
 
 **可编辑 PPT**（.pptx，PowerPoint/WPS 直接改文字和形状）
 
-| Ocean Depths | Botanical Garden |
+| 产品与创意 · 分栏封面 | 数据页 · 可编辑图表 |
 |:---:|:---:|
-| ![ppt-cover](docs/screenshots/ppt-cover.png) | ![ppt-compare](docs/screenshots/ppt-compare.png) |
+| ![新版 PPT 分栏封面](docs/screenshots/ppt-studio-032.jpg) | ![新版 PPT 原生图表，标注为演示数据](docs/screenshots/ppt-chart-032.jpg) |
+
+三种演示构图，按内容选用列表、对比、流程、时间线、重点指标和图表；长内容拆页。下面用同一份内容与配色展示构图差异。
+
+![三种演示构图对照](docs/screenshots/export-design-gallery.jpg)
 
 **HTML 演示稿**（键盘/触屏翻页，16:9 自适应）
 
-| Tech Innovation 封面 | 内容页 |
-|:---:|:---:|
-| ![slides-cover](docs/screenshots/slides-cover.png) | ![slides-content](docs/screenshots/slides-content.png) |
+支持页码、进度条、讲者备注面板，以及键盘和触屏翻页。
 
 **HTML 文章**（你笔记的原文 + 专业排版 + 目录 + 主题色）
 
-![article](docs/screenshots/article.png)
+| 杂志阅读 | 专题报告 |
+|:---:|:---:|
+| ![杂志阅读版 HTML](docs/screenshots/export-editorial.jpg) | ![专题报告版 HTML](docs/screenshots/export-report.jpg) |
+
+另有技术文档版式，支持窄屏、目录跳转、阅读时长和代码块；正文保留原始笔记内容。
 
 ### 🖼️ 企业配图
 
@@ -98,7 +110,7 @@ PPT / HTML 演示增加编辑式、产品分栏、技术演示三种构图，新
 
 ### 1. 安装插件
 
-下载 [dist/md-companion-0.3.2.zip](../../releases)，把整个 `md-companion` 文件夹解压到你的库的 `.obsidian/plugins/`。在第三方插件中启用 **hotyaya**。
+发布包可在 [Releases](https://github.com/Emily-zjy/hotyaya/releases) 下载，以发布页面标注的版本为准。把整个 `md-companion` 文件夹解压到你的库的 `.obsidian/plugins/`，在第三方插件中启用 **hotyaya**。更新时保留自己的 `data.json`，重新加载插件后生效。
 
 或者从源码构建：
 
