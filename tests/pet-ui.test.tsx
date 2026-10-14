@@ -15,6 +15,50 @@ afterEach(() => {
   cleanup();
   vi.useRealTimers();
 });
+
+it("offers separate cat and duck actions and immediately reveals each animation", () => {
+  const { props, getSaved } = setup();
+  render(<PetCompanion {...props} />);
+  fireEvent.click(screen.getByRole("button", { name: "宠物互动" }));
+  fireEvent.click(screen.getByRole("button", { name: "扑蝴蝶" }));
+  expect(screen.queryByRole("dialog")).toBeNull();
+  expect(
+    screen.getByRole("button", { name: "打开hotyaya" }).dataset.activity,
+  ).toBe("cat-pounce");
+  expect(getSaved().diary[0].text).toContain("蝴蝶");
+  fireEvent.click(screen.getByRole("button", { name: "宠物互动" }));
+  fireEvent.change(screen.getByLabelText("形象"), {
+    target: { value: "duck" },
+  });
+  expect(screen.queryByRole("button", { name: "扑蝴蝶" })).toBeNull();
+  fireEvent.click(screen.getByRole("button", { name: "拍拍翅膀" }));
+  expect(screen.queryByRole("dialog")).toBeNull();
+  expect(
+    screen.getByRole("img", { name: /hotyaya：/ }).getAttribute("src"),
+  ).toBe("/assets/yellow_swipe_8fps.gif");
+});
+
+it("restarting a manual action replays its opening pose", () => {
+  vi.useFakeTimers();
+  const { props } = setup();
+  render(<PetCompanion {...props} />);
+  const pounce = () => {
+    fireEvent.click(screen.getByRole("button", { name: "宠物互动" }));
+    fireEvent.click(screen.getByRole("button", { name: "扑蝴蝶" }));
+  };
+  pounce();
+  const first = screen
+    .getByRole("img", { name: /hotyaya：/ })
+    .getAttribute("style");
+  act(() => vi.advanceTimersByTime(1100));
+  expect(
+    screen.getByRole("img", { name: /hotyaya：/ }).getAttribute("style"),
+  ).not.toBe(first);
+  pounce();
+  expect(
+    screen.getByRole("img", { name: /hotyaya：/ }).getAttribute("style"),
+  ).toBe(first);
+});
 function setup(overrides = {}) {
   let saved = normalizePet();
   const save = vi.fn((next) => {

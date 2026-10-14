@@ -1,3 +1,5 @@
+import { PetSprite } from "./PetSprite";
+import { idleActions, animationDuration } from "./pet-animation";
 import React, { useEffect, useRef, useState } from "react";
 import {
   PawPrint,
@@ -22,27 +24,6 @@ import {
   type PetMemory,
 } from "./pet-model";
 
-const FRAMES = {
-  idle: [[3, 3]],
-  alert: [[7, 3]],
-  sleep: [
-    [2, 0],
-    [2, 1],
-  ],
-  groom: [
-    [5, 0],
-    [6, 0],
-    [7, 0],
-  ],
-  walk: [
-    [3, 0],
-    [3, 1],
-  ],
-  run: [
-    [4, 2],
-    [4, 3],
-  ],
-};
 const CHOICES = [
   ["pet", Heart, "摸摸"],
   ["feed", Cookie, "喂点心"],
@@ -51,7 +32,22 @@ const CHOICES = [
   ["break", Coffee, "一起摸鱼"],
   ["focus", Timer, "一起专注"],
 ] as const;
-const IDLE = ["idle", "walk", "groom", "break", "sleep"] as const;
+const SPECIAL = {
+  cat: [
+    ["groom", "洗洗脸"],
+    ["stretch", "伸懒腰"],
+    ["scratch", "抓抓板"],
+    ["pounce", "扑蝴蝶"],
+    ["yawn", "打哈欠"],
+  ],
+  duck: [
+    ["flap", "拍拍翅膀"],
+    ["preen", "梳理羽毛"],
+    ["waddle", "摇摆散步"],
+    ["dance", "开心踏步"],
+    ["swim", "游一圈"],
+  ],
+} as const;
 const WELCOME = [
   "你来啦，给你留了一个软软的位置。",
   "今天也一起慢慢来。",
@@ -89,7 +85,7 @@ export function PetCompanion({
   const [local, setLocal] = useState<keyof typeof ACTIVITIES>("idle");
   const [hover, setHover] = useState(false);
   const [lifted, setLifted] = useState(false);
-  const [frame, setFrame] = useState(0);
+  const [replay, setReplay] = useState(0);
   const [clock, setClock] = useState(Date.now());
   const [toast, setToast] = useState(
     WELCOME[Math.floor(Math.random() * WELCOME.length)],
@@ -167,11 +163,6 @@ export function PetCompanion({
     };
   }, []);
   useEffect(() => {
-    if (reduced || !visible) return;
-    const timer = setInterval(() => setFrame((f) => f + 1), 160);
-    return () => clearInterval(timer);
-  }, [reduced, visible]);
-  useEffect(() => {
     if (!toast) return;
     const timer = setTimeout(() => setToast(""), 6500);
     return () => clearTimeout(timer);
@@ -195,6 +186,10 @@ export function PetCompanion({
     }
   }, [running, reading]);
   useEffect(() => {
+    clearTimeout(actionTimer.current);
+    setLocal("idle");
+  }, [memory.skin]);
+  useEffect(() => {
     if (
       running ||
       reading ||
@@ -209,13 +204,24 @@ export function PetCompanion({
       () =>
         setLocal((s) =>
           s === "idle"
-            ? IDLE[1 + Math.floor(Math.random() * (IDLE.length - 1))]
+            ? idleActions(memory.skin)[
+                Math.floor(Math.random() * idleActions(memory.skin).length)
+              ]
             : "idle",
         ),
       14000,
     );
     return () => clearInterval(timer);
-  }, [running, reading, menu, hover, lifted, visible, memory.focusUntil]);
+  }, [
+    running,
+    reading,
+    menu,
+    hover,
+    lifted,
+    visible,
+    memory.focusUntil,
+    memory.skin,
+  ]);
   useEffect(() => {
     if (!memory.focusUntil) return;
     const tick = () => {
@@ -285,6 +291,7 @@ export function PetCompanion({
     if (busy) return;
     setMenu(false);
     menuButton.current?.focus();
+    setReplay((value) => value + 1);
     setRecentOutcome("idle");
     const next = interact(memoryRef.current, kind);
     persist(next);
@@ -293,17 +300,14 @@ export function PetCompanion({
     clearTimeout(actionTimer.current);
     actionTimer.current = setTimeout(
       () => setLocal("idle"),
-      kind === "sleep" || kind === "break" ? 30000 : 6000,
+      kind === "sleep" || kind === "break"
+        ? 30000
+        : Math.max(
+            4000,
+            animationDuration(memory.skin, ACTIVITIES[kind].motion) * 2,
+          ),
     );
   };
-  const cells = FRAMES[activity.sprite];
-  const cell =
-    cells[
-      (reduced
-        ? 0
-        : Math.floor(frame / (activity.sprite === "sleep" ? 4 : 1))) %
-        cells.length
-    ];
   const position = memory.position;
   const viewport = button.current?.ownerDocument.defaultView;
   const left =
@@ -445,31 +449,20 @@ export function PetCompanion({
         }}
       >
         <span className="mdc-pet-shadow" />
-        <span className={`mdc-pet-actor motion-${activity.motion}`}>
-          {memory.skin === "cat" && host.petAsset ? (
-            <span
-              className="mdc-neko"
-              role="img"
-              aria-label={`${memory.name}：${activity.label}`}
-              style={{
-                width: memory.size,
-                height: memory.size,
-                backgroundImage: `url("${host.petAsset("oneko.gif")}")`,
-                backgroundSize: `${memory.size * 8}px ${memory.size * 4}px`,
-                backgroundPosition: `${-cell[0] * memory.size}px ${-cell[1] * memory.size}px`,
-              }}
-            />
-          ) : (
-            <img
-              src={
-                reduced
-                  ? (host.petAsset?.("icon.png") ?? host.petUrl("idle"))
-                  : host.petUrl(duckState)
-              }
-              alt={`${memory.name}：${activity.label}`}
-              draggable={false}
-            />
-          )}
+        <span
+          key={`${activity.motion}-${replay}`}
+          className={`mdc-pet-actor motion-${activity.motion}`}
+        >
+          <PetSprite
+            skin={memory.skin}
+            size={memory.size}
+            name={memory.name}
+            activity={activity}
+            host={host}
+            reduced={reduced}
+            visible={visible}
+            fallback={duckState}
+          />
           <span className="mdc-pet-prop" aria-hidden="true">
             {activity.prop}
           </span>
@@ -556,6 +549,20 @@ export function PetCompanion({
                 <span>{label}</span>
               </button>
             ))}
+          </div>
+          <div className="mdc-pet-special">
+            <p>{memory.skin === "cat" ? "猫咪的小习惯" : "小鸭的拿手好戏"}</p>
+            <div className="mdc-pet-extra-actions">
+              {SPECIAL[memory.skin].map(([key, label]) => (
+                <button
+                  key={key}
+                  disabled={busy || Boolean(memory.focusUntil)}
+                  onClick={() => doAction(key)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
           </div>
           {memory.focusUntil && (
             <button

@@ -10,6 +10,12 @@
 
 ---
 
+## 0.3.1 · 两个伙伴各有小习惯
+
+宠物小窝新增各 5 种动作：猫咪洗脸、伸懒腰、抓抓板、扑蝴蝶、打哈欠；小鸭拍翅、梳羽、摇摆散步、开心踏步、游一圈。点击后小窝自动收起，直接看动作；再次点击会从头重播。
+
+猫使用 oneko 原素材中此前未启用的姿态；鸭使用 VS Code Pets 原有的走路/快走/跑动/挥翅/带球动画做分阶段编排。空闲行为按宠物种类随机变化，所有素材仍离线加载。
+
 ## 0.3.0 · 住在笔记旁的小伙伴
 
 新增 oneko 云朵猫，保留小黄鸭；素材随插件离线提供。点击宠物聊天，点击爪印或右键打开「宠物小窝」，拖动可移动位置。
@@ -86,7 +92,7 @@
 
 ### 1. 安装插件
 
-下载 [dist/md-companion-0.3.0.zip](../../releases)，把整个 `md-companion` 文件夹解压到你的库的 `.obsidian/plugins/`。在第三方插件中启用 **hotyaya**。
+下载 [dist/md-companion-0.3.1.zip](../../releases)，把整个 `md-companion` 文件夹解压到你的库的 `.obsidian/plugins/`。在第三方插件中启用 **hotyaya**。
 
 或者从源码构建：
 
@@ -96,7 +102,7 @@ cd hotyaya
 npm ci
 npm run build
 npm run package
-# dist/md-companion-0.3.0.zip
+# dist/md-companion-0.3.1.zip
 ```
 
 ### 2. 配置模型

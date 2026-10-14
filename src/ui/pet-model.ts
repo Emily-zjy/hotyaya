@@ -1,6 +1,22 @@
 import type { Action } from "../shared/protocol";
 
-export type Interaction = "pet" | "feed" | "play" | "sleep" | "break" | "focus";
+export type Interaction =
+  | "pet"
+  | "feed"
+  | "play"
+  | "sleep"
+  | "break"
+  | "focus"
+  | "groom"
+  | "stretch"
+  | "scratch"
+  | "pounce"
+  | "yawn"
+  | "flap"
+  | "preen"
+  | "waddle"
+  | "dance"
+  | "swim";
 export interface PetMemory {
   name: string;
   skin: "cat" | "duck";
@@ -27,9 +43,9 @@ export const ACTIVITIES = {
     sprite: "walk",
   },
   groom: {
-    label: "伸个懒腰，再继续",
-    prop: "✧",
-    motion: "stretch",
+    label: "认真洗洗脸，精神一下",
+    prop: "",
+    motion: "cat-wash",
     sprite: "groom",
   },
   pet: {
@@ -85,6 +101,60 @@ export const ACTIVITIES = {
     prop: "♡",
     motion: "breathe",
     sprite: "alert",
+  },
+  stretch: {
+    label: "前爪伸长长，肩膀也放松一下",
+    prop: "",
+    motion: "cat-stretch",
+    sprite: "groom",
+  },
+  scratch: {
+    label: "抓抓小板子，烦恼也抓跑啦",
+    prop: "▥",
+    motion: "cat-scratch",
+    sprite: "groom",
+  },
+  pounce: {
+    label: "嘘，发现一只小蝴蝶！",
+    prop: "🦋",
+    motion: "cat-pounce",
+    sprite: "run",
+  },
+  yawn: {
+    label: "哈——欠，允许自己慢一点",
+    prop: "z",
+    motion: "cat-yawn",
+    sprite: "sleep",
+  },
+  flap: {
+    label: "扑棱扑棱，给你扇来一点好心情",
+    prop: "✧",
+    motion: "duck-flap",
+    sprite: "groom",
+  },
+  preen: {
+    label: "把羽毛梳得蓬蓬松松",
+    prop: "",
+    motion: "duck-preen",
+    sprite: "groom",
+  },
+  waddle: {
+    label: "一摇一摆，巡视我们的地盘",
+    prop: "",
+    motion: "duck-waddle",
+    sprite: "walk",
+  },
+  dance: {
+    label: "左脚右脚，快乐不用理由",
+    prop: "♫",
+    motion: "duck-dance",
+    sprite: "run",
+  },
+  swim: {
+    label: "给自己放个小假，游一圈回来",
+    prop: "",
+    motion: "duck-swim",
+    sprite: "walk",
   },
   drag: { label: "搭个顺风车～", prop: "✧", motion: "lift", sprite: "alert" },
 } satisfies Record<string, Activity>;
@@ -192,6 +262,16 @@ export function normalizePet(value?: unknown, now = Date.now()): PetMemory {
   };
 }
 const MEMORIES: Record<Interaction, string> = {
+  groom: "陪小猫洗了洗脸",
+  stretch: "一起伸了个懒腰",
+  scratch: "看小猫认真抓抓板",
+  pounce: "陪小猫扑了一次蝴蝶",
+  yawn: "打了个哈欠，慢下来休息",
+  flap: "看小鸭开心拍翅",
+  preen: "陪小鸭梳理了羽毛",
+  waddle: "一起摇摇摆摆散步",
+  dance: "一起跳了一小段舞",
+  swim: "陪小鸭游了一圈",
   pet: "收到了温柔的摸摸",
   feed: "一起分享了一块点心",
   play: "一起玩了抛球",

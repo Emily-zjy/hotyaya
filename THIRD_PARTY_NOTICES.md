@@ -30,3 +30,5 @@ Additional npm license texts are collected in `vendor/licenses/npm/` by `scripts
 ## oneko cat sprites
 
 `assets/pet/oneko.gif` and frame coordinates are from https://github.com/adryd325/oneko.js (downloaded 2026-10-12). Copyright © 2022 adryd; MIT permission notice retained in `vendor/licenses/oneko.txt`. The sprite sheet is bundled locally, with no runtime upstream requests. No upstream script is executed. Original Neko lineage: https://en.wikipedia.org/wiki/Neko_(software).
+
+0.3.1 action research (2026-10-14): additional oneko tired, wall-scratch and diagonal-movement frame coordinates follow https://github.com/adryd325/oneko.js/blob/main/oneko.js. Duck choreography reuses the existing Marc Duiker assets, informed by https://github.com/tonybaloney/vscode-pets/blob/main/src/panel/pets/rubberduck.ts. Multi-stage timelines, CSS accents and interaction controls are hotyaya additions; no additional external scripts execute.

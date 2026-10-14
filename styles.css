@@ -189,3 +189,42 @@
 .theme-dark .mdc-pet-home { --mdc-paper:#282d29; --mdc-ink:#ece9df; --mdc-muted:#b0b1a4; --mdc-line:#42473e; border-color:#42473e; }
 .theme-dark .mdc-pet-home button,.theme-dark .mdc-pet-home select { color:inherit; }
 .theme-dark .mdc-pet-home .mdc-pet-actions button,.theme-dark .mdc-pet-home .mdc-pet-wide,.theme-dark .mdc-pet-home .mdc-pet-name-row button { background:#373e33; border-color:#4b5147; }
+
+/* Species-specific choreography uses upstream poses, then spatial accents. */
+.mdc-pet-body { display:block; width:100%; height:100%; position:relative; transform-origin:50% 85%; }
+.mdc-pet-special { margin:0 0 14px; padding-top:10px; border-top:1px solid var(--mdc-line); }
+.mdc-pet-special p { margin:0 0 7px; color:var(--mdc-muted); font-size:11px; }
+.mdc-pet-extra-actions { display:flex; flex-wrap:wrap; gap:6px; }
+.mdc-shell .mdc-pet-extra-actions button { border:1px solid #e5dfd4; padding:5px 9px; font-size:11px; border-radius:20px; }
+.mdc-shell .mdc-pet-extra-actions button:hover { border-color:#c6d3b8; background:#edf1e7; }
+.motion-cat-wash .mdc-pet-body { animation:mdc-wash 3.2s ease-in-out infinite; }
+.pose-drowsy { transform:translateY(2px); }
+.pose-curl,.pose-rest { transform:translateY(5px) scaleY(.88); }
+.pose-crouch { transform:scaleY(.9); }
+.pose-reach { transform:translateY(-4px) scaleY(1.06); }
+.pose-scratch { animation:mdc-scratch .25s ease-in-out infinite; }
+.pose-catch { transform:translateY(-3px) rotate(-8deg); }
+.pose-bow { transform:rotate(12deg) translateY(3px); }
+.pose-preen { animation:mdc-preen 1.6s ease-in-out infinite; }
+.pose-flap { animation:mdc-flap .8s ease-in-out infinite; }
+.motion-cat-pounce { animation:mdc-pounce 3.84s ease-in-out infinite; }
+.motion-cat-pounce .mdc-pet-prop { animation:mdc-butterfly 3.84s ease-in-out infinite; right:15px; top:-8px; font-size:19px; }
+.motion-cat-scratch .mdc-pet-prop { top:auto; bottom:5px; right:0; color:#b48f69; font-size:32px; }
+.motion-cat-yawn .mdc-pet-prop { animation:mdc-heart 4s ease-in-out infinite; font-size:16px; }
+.motion-duck-waddle { animation:mdc-duck-waddle 4.8s linear infinite; }
+.motion-duck-dance { animation:mdc-duck-dance 3.6s ease-in-out infinite; }
+.motion-duck-dance .mdc-pet-prop { animation:mdc-heart 1.8s ease-out infinite; }
+.motion-duck-swim { animation:mdc-duck-swim 4s ease-in-out infinite; }
+.pose-swim::after { content:""; position:absolute; left:12%; width:78%; bottom:7%; height:15%; border-bottom:4px double #83becd; border-radius:50%; animation:mdc-ripple 1.6s ease-out infinite; }
+@keyframes mdc-wash { 25%,50% { transform:rotate(-3deg); } 35%,60% { transform:rotate(3deg); } }
+@keyframes mdc-scratch { 50% { transform:translateY(-2px) rotate(2deg); } }
+@keyframes mdc-preen { 25% { transform:rotate(12deg) translateY(3px); } 75% { transform:rotate(-7deg); } }
+@keyframes mdc-flap { 45% { transform:translateY(-5px); } }
+@keyframes mdc-pounce { 0%,16%,100% { transform:translate(0,0); } 32%,55% { transform:translate(-12px,-15px); } 72% { transform:translate(-6px,-5px); } 84% { transform:translate(0,0); } }
+@keyframes mdc-butterfly { 0%,100% { transform:translate(0,0) rotate(-8deg); } 35% { transform:translate(-16px,-8px) rotate(15deg); } 60% { transform:translate(-5px,5px) rotate(-15deg); } }
+@keyframes mdc-duck-waddle { 0%,100% { transform:translateX(0) rotate(0); } 16% { transform:translateX(5px) rotate(-4deg); } 33%,50% { transform:translateX(12px) rotate(4deg); } 66% { transform:translateX(5px) rotate(-4deg); } 83% { transform:translateX(0) rotate(4deg); } }
+@keyframes mdc-duck-dance { 0%,100% { transform:translate(0,0); } 14%,42% { transform:translate(-6px,-6px) rotate(-8deg); } 28% { transform:translate(-6px,0); } 64%,85% { transform:translate(6px,-6px) rotate(8deg); } 76% { transform:translate(6px,0); } }
+@keyframes mdc-duck-swim { 0%,100% { transform:translate(0,0); } 20% { transform:translate(6px,2px); } 40% { transform:translate(12px,0); } 60% { transform:translate(5px,2px); } 80% { transform:translate(0,0); } }
+@keyframes mdc-ripple { 0% { opacity:.8; transform:scale(.75); } 100% { opacity:.1; transform:scale(1.1); } }
+.mdc-creature.is-still .mdc-pet-body,.mdc-creature.is-still .mdc-pet-body::after { animation:none!important; }
+@media(prefers-reduced-motion:reduce) { .mdc-pet-body,.mdc-pet-body::after { animation:none!important; } }

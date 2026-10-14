@@ -1,7 +1,7 @@
 {
   "id": "md-companion",
   "name": "hotyaya",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "minAppVersion": "1.11.4",
   "description": "A reading companion with a pet, streamed AI workflows, reversible edits and open-source export skills.",
   "author": "MD Companion contributors",
