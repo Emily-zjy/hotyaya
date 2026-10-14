@@ -16,6 +16,7 @@ import { exportPptx, parseDeck } from "./ppt";
 import { loadThemes, pickTheme, themeMenu } from "./theme";
 import { renderSlidesHtml } from "./slides-html";
 import { renderArticleHtml } from "./article-html";
+import { ARTICLE_DIRECTIVE, DECK_DIRECTIVE } from "./export-design";
 import { PLAN_DIRECTIVE, buildPrompt, planSchema, requestImage } from "./illustration";
 import {
   openLocalChromeSession,
@@ -115,9 +116,9 @@ const directives: Record<RunRequest["action"], string> = {
   research:
     "Return a curated reading list in the document language. Group the relevant retrieved sources by type (e.g. 教程/博客, 官方文档, 产品资料, 新闻/报告). For each: a Markdown link using the exact supplied URL and its title, then one sentence on what it offers relative to the document. Omit sources unrelated to the document without commenting on them. If none are relevant, say so in one sentence. Never invent URLs or content.",
   image: PLAN_DIRECTIVE,
-  pptx: 'Return ONLY JSON: {"theme":"one theme id from THEMES","title":"deck title","subtitle":"one line","slides":[{"layout":"bullets|cards|compare|quote|section","title":"short title","bullets":["short point"],"left":{"heading":"","bullets":[]},"right":{"heading":"","bullets":[]},"quote":"","note":"speaker note"}]}. 6–12 slides covering the whole document in its language. Pick the layout that fits each slide: cards for 3–9 parallel items, compare for two contrasting lists (fill left/right), quote for one key takeaway, section to open a major part, bullets otherwise. Vary layouts; do not use the same layout three times in a row. Keep each point under 40 characters, at most 6 bullets. Choose the theme whose mood and "best for" match the subject and audience. No code, SVG or markdown.',
-  slides: 'Return ONLY JSON: {"theme":"one theme id from THEMES","title":"deck title","subtitle":"one line","slides":[{"layout":"bullets|cards|compare|quote|section","title":"short title","bullets":["short point"],"left":{"heading":"","bullets":[]},"right":{"heading":"","bullets":[]},"quote":"","note":"speaker note"}]}. 6–12 slides covering the whole document in its language. Pick the layout that fits each slide: cards for 3–9 parallel items, compare for two contrasting lists (fill left/right), quote for one key takeaway, section to open a major part, bullets otherwise. Vary layouts; do not use the same layout three times in a row. Keep each point under 40 characters, at most 6 bullets. Choose the theme whose mood and "best for" match the subject and audience. No code, SVG or markdown.',
-  html: 'Return ONLY JSON {"theme":"one theme id from THEMES","summary":"2–3 sentence overview of the document for the article header, in its language"}. Choose the theme whose mood and "best for" match the subject. The article body is produced from the document itself.',
+  pptx: DECK_DIRECTIVE + " Output native editable presentation content for PowerPoint.",
+  slides: DECK_DIRECTIVE + " Output browser presentation content with concise speaker notes for the notes panel.",
+  html: ARTICLE_DIRECTIVE,
 };
 const PROSE_ACTIONS = ["table", "pptx", "slides", "html", "image", "research"];
 const JSON_ACTIONS = ["table", "pptx", "slides", "html", "image"];
@@ -728,6 +729,7 @@ export async function runWorkflow(request: RunRequest, ctx: WorkflowContext) {
           const raw = structured(text, "文章") as {
             theme?: unknown;
             summary?: unknown;
+            design?: unknown;
           };
           const theme = pickTheme(themes, raw.theme);
           add(
@@ -735,6 +737,7 @@ export async function runWorkflow(request: RunRequest, ctx: WorkflowContext) {
             "text/html",
             Buffer.from(
               renderArticleHtml(req.document.selection || req.document.content, theme, {
+                design: raw.design,
                 summary:
                   typeof raw.summary === "string" ? raw.summary.slice(0, 400) : "",
                 fallbackTitle:

@@ -62,7 +62,8 @@ export const tableSchema = z
     (v) => v.rows.every((r) => r.length === v.columns.length),
     "Rows must match column count",
   );
-const clip = (max: number) => z.string().transform((v) => v.trim().slice(0, max));
+const clip = (max: number) =>
+  z.string().transform((v) => v.trim().slice(0, max));
 const points = z
   .array(clip(200))
   .default([])
@@ -70,17 +71,57 @@ const points = z
 export const deckSchema = z.object({
   title: clip(120).pipe(z.string().min(1)),
   subtitle: clip(200).optional(),
+  design: z
+    .enum(["editorial", "studio", "technical"])
+    .optional()
+    .catch(undefined),
   slides: z
     .array(
       z.object({
         layout: z
-          .enum(["bullets", "cards", "compare", "quote", "section"])
+          .enum([
+            "bullets",
+            "cards",
+            "compare",
+            "quote",
+            "section",
+            "process",
+            "timeline",
+            "metrics",
+            "chart",
+          ])
           .catch("bullets"),
         title: clip(80).pipe(z.string().min(1)),
         bullets: points,
         left: z.object({ heading: clip(60), bullets: points }).optional(),
         right: z.object({ heading: clip(60), bullets: points }).optional(),
         quote: clip(200).optional(),
+        steps: z
+          .array(z.object({ label: clip(40), detail: clip(160).optional() }))
+          .max(12)
+          .optional(),
+        metrics: z
+          .array(
+            z.object({
+              value: clip(24),
+              label: clip(60),
+              detail: clip(100).optional(),
+            }),
+          )
+          .max(9)
+          .optional(),
+        chart: z
+          .object({
+            name: clip(80),
+            labels: z.array(clip(40)).min(1).max(8),
+            values: z.array(z.number().finite()).min(1).max(8),
+            unit: clip(20).optional(),
+          })
+          .refine(
+            (c) => c.labels.length === c.values.length,
+            "Chart labels must match values",
+          )
+          .optional(),
         note: clip(1000).optional(),
       }),
     )
@@ -99,7 +140,8 @@ export function parseJSON(value: string) {
   } catch (error) {
     const start = text.indexOf("{"),
       end = text.lastIndexOf("}");
-    if (start >= 0 && end > start) return JSON.parse(text.slice(start, end + 1));
+    if (start >= 0 && end > start)
+      return JSON.parse(text.slice(start, end + 1));
     throw error;
   }
 }
