@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import type { Activity } from "./pet-model";
 import type { CompanionHost } from "./types";
 import { animationFrame, type Skin } from "./pet-animation";
@@ -38,6 +38,19 @@ export function PetSprite({
     activity.sprite,
   );
   const label = `${name}：${activity.label}`;
+  const file =
+    skin === "cat" && host.petAsset
+      ? "oneko.gif"
+      : reduced
+        ? "icon.png"
+        : frame.file;
+  const fallbackState = reduced ? "idle" : fallback;
+  // Obsidian may append Date.now() for files inside .obsidian/plugins. Resolve
+  // once per asset, otherwise each frame reloads the atlas or restarts the GIF.
+  const assetUrl = useMemo(
+    () => host.petAsset?.(file) ?? host.petUrl(fallbackState),
+    [host.petAsset, host.petUrl, file, fallbackState],
+  );
   return (
     <span className={`mdc-pet-body pose-${frame.pose}`} data-pose={frame.pose}>
       {skin === "cat" && host.petAsset ? (
@@ -48,7 +61,7 @@ export function PetSprite({
           style={{
             width: size,
             height: size,
-            backgroundImage: `url("${host.petAsset("oneko.gif")}")`,
+            backgroundImage: `url("${assetUrl}")`,
             backgroundSize: `${size * 8}px ${size * 4}px`,
             backgroundPosition: `${-frame.cell[0] * size}px ${-frame.cell[1] * size}px`,
           }}
@@ -56,11 +69,7 @@ export function PetSprite({
       ) : (
         <img
           key={frame.file}
-          src={
-            reduced
-              ? (host.petAsset?.("icon.png") ?? host.petUrl("idle"))
-              : (host.petAsset?.(frame.file) ?? host.petUrl(fallback))
-          }
+          src={assetUrl}
           style={{ transform: frame.flip ? "scaleX(-1)" : undefined }}
           alt={label}
           draggable={false}

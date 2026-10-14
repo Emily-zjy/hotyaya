@@ -113,7 +113,7 @@
 .mdc-shell .mdc-creature { width:80px; height:auto!important; aspect-ratio:1; padding:0; border:0!important; border-radius:0!important; background:transparent!important; box-shadow:none!important; isolation:isolate; }
 .mdc-creature .mdc-pet-actor { position:relative; display:block; width:100%; height:100%; transform-origin:50% 85%; filter:drop-shadow(0 2px 1px #382a241a); }
 .mdc-creature img { width:100%; height:100%; object-fit:contain; }
-.mdc-neko { display:block; image-rendering:pixelated; background-repeat:no-repeat; }
+.mdc-neko { display:block; image-rendering:pixelated; background-repeat:no-repeat; transition:none!important; }
 .mdc-pet-shadow { position:absolute; bottom:0; left:22%; width:56%; height:9%; border-radius:50%; background:#575c3a20; filter:blur(2px); }
 .mdc-pet-prop { position:absolute; right:-2px; top:4px; min-width:22px; font-size:23px; font-weight:700; color:#ae7155; text-shadow:0 1px 4px #fff; pointer-events:none; }
 .mdc-pet-name { position:absolute; top:100%; left:50%; transform:translateX(-50%); max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:10px; font-weight:600; letter-spacing:.02em; background:var(--mdc-paper); border:1px solid var(--mdc-line); border-radius:20px; padding:1px 9px; }
