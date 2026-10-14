@@ -1,5 +1,5 @@
 /** Deterministic renderer preview; no model credentials, user files or network calls. */
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { deckSchema } from "../src/worker/schema";
 import { exportPptx } from "../src/worker/ppt";
@@ -9,13 +9,47 @@ import { loadThemes, pickTheme } from "../src/worker/theme";
 
 const out = resolve(".superpowers/pet-preview/exports");
 await mkdir(out, { recursive: true });
-const theme = pickTheme(loadThemes(resolve("vendor/skills")), "ocean-depths");
-const stress = deckSchema.parse({title:"长内容边界检查",design:"technical",slides:[
-  {layout:"chart",title:"八个长标签按页展示且保持统一比例",chart:{name:"边界演示数据",labels:Array.from({length:8},(_,i)=>`${i+1}：${"中文标签".repeat(9)}`),values:[-3,2,4,6,8,10,12,14]}},
-  {layout:"metrics",title:"长数值和解释",metrics:Array.from({length:3},()=>({value:"十二万亿元人民币年度统计完整口径",label:"完整的指标名称需要保留其适用范围和限制条件",detail:"这是测试内容。".repeat(12)}))},
-  {layout:"process",title:"长步骤保留全部说明",steps:Array.from({length:6},(_,i)=>({label:`第${i+1}步${"步骤名称".repeat(7)}`,detail:"这是需要完整保留的详细说明。".repeat(10)}))},
-]});
-await writeFile(resolve(out,"stress-slides.html"),renderSlidesHtml(stress,theme));
+const themes = loadThemes(resolve("vendor/skills"));
+const theme = pickTheme(themes, "ocean-depths");
+const stress = deckSchema.parse({
+  title: "长内容边界检查",
+  design: "technical",
+  slides: [
+    {
+      layout: "chart",
+      title: "八个长标签按页展示且保持统一比例",
+      chart: {
+        name: "边界演示数据",
+        labels: Array.from(
+          { length: 8 },
+          (_, i) => `${i + 1}：${"中文标签".repeat(9)}`,
+        ),
+        values: [-3, 2, 4, 6, 8, 10, 12, 14],
+      },
+    },
+    {
+      layout: "metrics",
+      title: "长数值和解释",
+      metrics: Array.from({ length: 3 }, () => ({
+        value: "十二万亿元人民币年度统计完整口径",
+        label: "完整的指标名称需要保留其适用范围和限制条件",
+        detail: "这是测试内容。".repeat(12),
+      })),
+    },
+    {
+      layout: "process",
+      title: "长步骤保留全部说明",
+      steps: Array.from({ length: 6 }, (_, i) => ({
+        label: `第${i + 1}步${"步骤名称".repeat(7)}`,
+        detail: "这是需要完整保留的详细说明。".repeat(10),
+      })),
+    },
+  ],
+});
+await writeFile(
+  resolve(out, "stress-slides.html"),
+  renderSlidesHtml(stress, theme),
+);
 const content = {
   title: "让知识真正用起来",
   subtitle: "个人知识库的整理与复用 · 版式演示",
@@ -172,5 +206,56 @@ await writeFile(
         `<article><h3>${name}</h3><a href="${id}-article.html">打开网页</a></article>`,
     )
     .join("")}</section></main></html>`,
+);
+const names: Record<string, string> = {
+  "arctic-frost": "极地冰霜",
+  "botanical-garden": "植物花园",
+  "desert-rose": "沙漠玫瑰",
+  "forest-canopy": "森林树冠",
+  "golden-hour": "金色时光",
+  "midnight-galaxy": "午夜星河",
+  "modern-minimalist": "现代简约",
+  "ocean-depths": "海洋深蓝",
+  "sunset-boulevard": "落日大道",
+  "tech-innovation": "科技创新",
+};
+const paletteCards: string[] = [];
+for (const palette of themes) {
+  const id = `palette-${palette.id}`;
+  const deck = deckSchema.parse({ ...content, design: "studio" });
+  await writeFile(resolve(out, `${id}.pptx`), await exportPptx(deck, palette));
+  await writeFile(
+    resolve(out, `${id}-slides.html`),
+    renderSlidesHtml(deck, palette),
+  );
+  await writeFile(
+    resolve(out, `${id}-article.html`),
+    renderArticleHtml(markdown, palette, {
+      design: "report",
+      fallbackTitle: "知识整理",
+      summary: "同一份内容使用不同的主题配色，正文与版式保持一致，便于比较。",
+    }),
+  );
+  const source = await readFile(
+    resolve("vendor/skills/theme-factory/themes", `${palette.id}.md`),
+    "utf8",
+  );
+  const colors = [...source.matchAll(/`#([0-9a-fA-F]{6})`/g)].map((m) => m[1]);
+  paletteCards.push(
+    `<article style="--paper:#${palette.light};--ink:#${palette.ink};--accent:#${palette.accent}"><div class="mini"><span>${names[palette.id]}</span><strong>让知识真正用起来</strong><i></i></div><h2>${names[palette.id]} <small>${palette.name}</small></h2><p>skills 原始色板</p><div class="swatches">${colors.map((c) => `<span style="background:#${c}" title="#${c}"></span>`).join("")}</div><p class="hex">${colors.map((c) => `#${c}`).join(" · ")}</p><a href="${id}-slides.html">演示效果</a><a href="${id}-article.html">网页效果</a><a href="${id}.pptx">下载 PPT</a></article>`,
+  );
+}
+await writeFile(
+  resolve(out, "palettes.html"),
+  `<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>hotyaya · skills 配色总览</title><style>*{box-sizing:border-box}body{margin:0;background:#f5f3ed;color:#24242b;font-family:system-ui,'Microsoft YaHei',sans-serif}main{max-width:1200px;margin:auto;padding:48px 24px}h1{font-size:clamp(30px,5vw,48px)}.intro{max-width:800px;line-height:1.8;color:#666}section{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;margin-top:36px}article{background:white;border:1px solid #dedbd4;padding:18px}h2{font-size:20px;margin:20px 0 12px}small{display:block;font-size:12px;font-weight:400;color:#707079;margin-top:4px}.mini{height:160px;background:var(--paper);color:var(--ink);padding:22px;position:relative;border-right:48px solid var(--accent)}.mini span{font-size:10px}.mini strong{display:block;font-size:23px;max-width:180px;margin-top:22px}.mini i{display:block;width:32px;height:3px;background:var(--accent);margin-top:16px}.swatches{display:flex;height:30px}.swatches span{flex:1}p{font-size:12px;color:#666}.hex{font-family:monospace;font-size:10px;overflow-wrap:anywhere}a{display:inline-block;color:#353546;margin:8px 16px 0 0;font-size:13px}a:focus-visible{outline:2px solid currentColor;outline-offset:3px}</style><main><a href="index.html">← 版式对照</a><h1>skills 里的 10 套配色</h1><p class="intro">所有色板均读取项目自带的 theme-factory。下面同时展示原始颜色和实际导出效果；为保证文字可读，导出时会从原色派生浅底、正文色与辅助色。点击同一套主题的演示、网页或 PPT，查看完整效果。</p><section>${paletteCards.join("")}</section></main></html>`,
+);
+const galleryPath = resolve(out, "index.html");
+const gallery = await readFile(galleryPath, "utf8");
+await writeFile(
+  galleryPath,
+  gallery.replace(
+    "<h2>演示稿",
+    '<p><a href="palettes.html">查看 skills 中全部 10 套配色 →</a></p><h2>演示稿',
+  ),
 );
 console.log(`Export previews: ${out}`);
